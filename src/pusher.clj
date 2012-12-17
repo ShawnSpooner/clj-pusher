@@ -3,7 +3,7 @@
    [clj-http.client :as http]
    [pusher.auth :as auth])
  (:use
-   [clojure.data.json :only [json-str]]))
+   [clojure.data.json :only [write-str]]))
 
 (def ^{:dynamic true} *pusher-app-id* nil)
 (def ^{:dynamic true} *pusher-key* nil)
@@ -29,7 +29,7 @@
 (defstruct request :method :path :query :body)
 
 (defn trigger [event data]
-  (let [request (struct request "POST" (channel-events-path) {:name event} (json-str data))]
+  (let [request (struct request "POST" (channel-events-path) {:name event} (write-str data))]
     (http/post (uri (request :path))
                {:body (request :body)
                 :query-params (:query (auth/authenticated-request *pusher-key* *pusher-secret* request))
